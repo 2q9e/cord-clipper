@@ -245,3 +245,16 @@ public final class CordClipperScreen extends Screen {
         int max = Math.max(0, stagedWebhooks.size() - visibleRows);
         firstVisibleWebhook = Math.max(0, Math.min(firstVisibleWebhook, max));
     }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context, mouseX, mouseY, delta);
+
+        context.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xD01C1510);
+        drawBorder(context, panelX, panelY, panelWidth, panelHeight, 0xFF000000);
+
+        context.drawCenteredTextWithShadow(
+                textRenderer,
+                Text.translatable("screen.cord_clipper.title"),
+                width / 2,
+                panelY + 15,
