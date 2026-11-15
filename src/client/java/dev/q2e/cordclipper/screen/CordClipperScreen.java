@@ -37,3 +37,16 @@ public final class CordClipperScreen extends Screen {
     private int stagedClipKeyCode;
     private int firstVisibleWebhook;
     private boolean listeningForClipKey;
+
+    private int panelX;
+    private int panelY;
+    private int panelWidth;
+    private int panelHeight;
+    private int listTop;
+    private int listBottom;
+    private int visibleRows;
+
+    private TextFieldWidget webhookUrlField;
+    private ButtonWidget clipKeyButton;
+
+    public CordClipperScreen(Screen parent, CordClipperConfig config, Runnable clipAction) {
