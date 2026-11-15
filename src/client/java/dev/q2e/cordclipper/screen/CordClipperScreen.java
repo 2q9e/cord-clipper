@@ -310,3 +310,16 @@ public final class CordClipperScreen extends Screen {
             );
 
             int removeX = panelX + panelWidth - 82;
+            context.fill(removeX, y + 1, removeX + 66, y + ROW_CONTENT_HEIGHT - 1, 0x7020100D);
+            drawBorder(context, removeX, y + 1, 66, ROW_CONTENT_HEIGHT - 2, 0xFF000000);
+            context.drawCenteredTextWithShadow(
+                    textRenderer,
+                    Text.translatable("screen.cord_clipper.remove"),
+                    removeX + 33,
+                    y + 6,
+                    0xFFFFD8D0
+            );
+        }
+    }
+
+    @Override
