@@ -154,3 +154,16 @@ public final class DiscordWebhookSender {
     }
 
     private static Long retryAfterMillis(HttpResponse<String> response) {
+        String header = response.headers().firstValue("Retry-After").orElse(null);
+        Long fromHeader = parseRetryAfter(header);
+        if (fromHeader != null) {
+            return fromHeader;
+        }
+
+        Long fromResetHeader = parseRetryAfter(
+                response.headers().firstValue("X-RateLimit-Reset-After").orElse(null)
+        );
+        if (fromResetHeader != null) {
+            return fromResetHeader;
+        }
+
