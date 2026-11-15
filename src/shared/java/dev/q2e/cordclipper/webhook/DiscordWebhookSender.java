@@ -16,11 +16,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * Sends coordinate embeds without blocking Minecraft's client thread.
@@ -31,9 +33,12 @@ import java.util.concurrent.TimeUnit;
 public final class DiscordWebhookSender {
     private static final Logger LOGGER = LoggerFactory.getLogger("cord_clipper");
     private static final int SUPPRESS_NOTIFICATIONS_FLAG = 1 << 12;
+    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(20);
+    private static final Pattern WEBHOOK_PATH = Pattern.compile("/api(?:/v[0-9]+)?/webhooks/[^/]+/[^/]+/?");
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
+            .connectTimeout(CONNECT_TIMEOUT)
             .followRedirects(HttpClient.Redirect.NEVER)
             .build();
 
@@ -56,11 +61,19 @@ public final class DiscordWebhookSender {
             return;
         }
 
-        String body = createPayload(snapshot).toString();
-        for (WebhookEndpoint endpoint : List.copyOf(endpoints)) {
+        List<WebhookEndpoint> destinations = new ArrayList<>(endpoints.size());
+        for (WebhookEndpoint endpoint : endpoints) {
             if (endpoint != null) {
-                send(endpoint, body);
+                destinations.add(endpoint);
             }
+        }
+        if (destinations.isEmpty()) {
+            return;
+        }
+
+        String body = createPayload(snapshot).toString();
+        for (WebhookEndpoint endpoint : destinations) {
+            send(endpoint, body);
         }
     }
 
@@ -76,7 +89,7 @@ public final class DiscordWebhookSender {
 
         try {
             HttpRequest request = HttpRequest.newBuilder(uri)
-                    .timeout(Duration.ofSeconds(20))
+                    .timeout(REQUEST_TIMEOUT)
                     .header("Content-Type", "application/json; charset=utf-8")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
@@ -129,8 +142,7 @@ public final class DiscordWebhookSender {
         if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null
                 || uri.getRawUserInfo() != null || (uri.getPort() != -1 && uri.getPort() != 443)
                 || uri.getRawFragment() != null || !isDiscordHost(host)
-                || path == null
-                || !path.matches("/api(?:/v[0-9]+)?/webhooks/[^/]+/[^/]+/?")) {
+                || path == null || !WEBHOOK_PATH.matcher(path).matches()) {
             throw new IllegalArgumentException("Not a Discord webhook URL");
         }
 

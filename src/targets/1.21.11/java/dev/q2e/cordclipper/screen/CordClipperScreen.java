@@ -159,13 +159,7 @@ public final class CordClipperScreen extends Screen {
 
     private void persistStagedSettings() {
         try {
-            for (WebhookEndpoint current : List.copyOf(config.getWebhooks())) {
-                config.removeWebhook(current.id());
-            }
-            for (WebhookEndpoint staged : stagedWebhooks) {
-                config.addWebhook(staged.label(), staged.url());
-            }
-            config.setClipKeyCode(stagedClipKeyCode);
+            config.replaceSettings(stagedWebhooks, stagedClipKeyCode);
         } catch (RuntimeException ignored) {
             // All failures stay out of the game UI. Config persistence handles
             // diagnostics in logs, and the player is never shown an error here.

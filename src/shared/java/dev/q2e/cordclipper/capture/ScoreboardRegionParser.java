@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,16 +12,20 @@ import java.util.regex.Pattern;
 public final class ScoreboardRegionParser {
     private static final Pattern LABELED_REGION = Pattern.compile(
             "(?i)\\b(?:server\\s+)?(?:region|location|geo|datacenter|data[\\s_-]*center|cluster)\\b"
-                    + "\\s*(?:code\\b)?\\s*[:=\\-–—|•]?\\s*(.+?)\\s*$"
+                    + "\\s*(?:code\\b)?\\s*[:=\\-\\x{2013}\\x{2014}|\\x{2022}]?\\s*(.+?)\\s*$"
     );
     private static final Pattern PING_CONTEXT = Pattern.compile(
             "(?i)\\b(?:ping|latency|rtt)\\b|\\b\\d+(?:[.,]\\d+)?\\s*(?:ms|msec|milliseconds?)\\b"
     );
+    private static final Pattern NO_REGION_VALUE = Pattern.compile(
+            "(?i)^(?:n\\s*/\\s*a|not\\s+available|unavailable|none|unknown|--+)$"
+    );
+    private static final Set<String> MISSING_REGION_VALUES = Set.of("n a", "not available", "unavailable", "none", "unknown");
     private static final Pattern PARENTHETICAL = Pattern.compile(
             "[\\(\\[\\{<]\\s*([^\\)\\]\\}>]{1,48}?)\\s*[\\)\\]\\}>]"
     );
     private static final Pattern REGION_BEFORE_PING = Pattern.compile(
-            "(?i)^\\s*(.{1,64}?)\\s*[|•–—-]+\\s*(?:ping|latency|rtt)\\b"
+            "(?i)^\\s*(.{1,64}?)\\s*[|\\x{2022}\\x{2013}\\x{2014}-]+\\s*(?:ping|latency|rtt)\\b"
     );
     private static final Pattern REGION_AFTER_LATENCY = Pattern.compile(
             "(?i)\\b\\d+(?:[.,]\\d+)?\\s*(?:(?:ms|msec|milliseconds?)\\b)?\\s*(.*)$"
@@ -32,10 +37,19 @@ public final class ScoreboardRegionParser {
     private static final Pattern LATENCY = Pattern.compile(
             "(?i)\\b\\d+(?:[.,]\\d+)?\\s*(?:ms|msec|milliseconds?)\\b"
     );
+    private static final Pattern NON_ALPHANUMERIC = Pattern.compile("[^\\p{L}\\p{N}]+");
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final Pattern NUMERIC_TOKEN = Pattern.compile("\\b\\d+(?:[.,]\\d+)?\\b");
+    private static final Pattern REGION_WORDS = Pattern.compile("[\\p{L}]+(?: [\\p{L}]+){0,5}");
+    private static final Pattern NON_REGION_TERMS = Pattern.compile(
+            "(?i)\\b(?:tps|cps|fps|mspt|kdr|kills?|deaths?|crystals?|online|players?|shop|survival|skyblock|team|rank|coins?|money|ping|latency|rtt)\\b"
+    );
     private static final Pattern IGNORED_LABELS = Pattern.compile(
             "(?i)\\b(?:ping|latency|region|location|server)\\b"
     );
-    private static final Pattern CODE = Pattern.compile("(?i)[a-z][a-z0-9]{1,11}");
+    private static final Pattern CODE = Pattern.compile("[\\p{L}][\\p{L}\\p{N}]{1,11}");
+    private static final Pattern REGION_ALIAS_CODE = Pattern.compile("[a-z0-9]{2,12}");
+    private static final Set<String> BASE_REGION_CODES = Set.of("na", "eu", "as", "sa", "af", "me", "oc");
 
     private static final Map<String, String> REGION_NAMES = Map.ofEntries(
             Map.entry("na", "North America (NA)"),
@@ -134,8 +148,10 @@ public final class ScoreboardRegionParser {
             Map.entry("south america", "South America (SA)"),
             Map.entry("sae", "South America East (SAE)"),
             Map.entry("sa east", "South America East (SAE)"),
+            Map.entry("south america east", "South America East (SAE)"),
             Map.entry("saw", "South America West (SAW)"),
             Map.entry("sa west", "South America West (SAW)"),
+            Map.entry("south america west", "South America West (SAW)"),
             Map.entry("latam", "Latin America (LATAM)"),
             Map.entry("latin america", "Latin America (LATAM)"),
             Map.entry("br", "Brazil (BR)"),
@@ -162,11 +178,22 @@ public final class ScoreboardRegionParser {
     );
     private static final Pattern KNOWN_REGION_TOKEN = Pattern.compile(
             "(?i)\\b(" + REGION_NAMES.keySet().stream()
-                    .filter(key -> key.matches("[a-z0-9]{2,12}"))
+                    .filter(key -> REGION_ALIAS_CODE.matcher(key).matches())
                     .sorted((left, right) -> Integer.compare(right.length(), left.length()))
                     .map(Pattern::quote)
                     .collect(java.util.stream.Collectors.joining("|")) + ")\\b"
     );
+    private static final Pattern REGION_CODE_TOKEN = Pattern.compile(
+            "(?i)\\b(" + REGION_NAMES.values().stream()
+                    .map(ScoreboardRegionParser::codeFromDisplayName)
+                    .filter(code -> code != null)
+                    .filter(code -> !BASE_REGION_CODES.contains(code.toLowerCase(Locale.ROOT)))
+                    .distinct()
+                    .sorted((left, right) -> Integer.compare(right.length(), left.length()))
+                    .map(Pattern::quote)
+                    .collect(java.util.stream.Collectors.joining("|")) + ")\\b"
+    );
+    private static final Set<String> KNOWN_REGION_NAMES = Set.copyOf(REGION_NAMES.values());
     private static final List<Map.Entry<String, String>> REGION_ALIASES_BY_LENGTH = REGION_NAMES.entrySet().stream()
             .sorted((left, right) -> Integer.compare(right.getKey().length(), left.getKey().length()))
             .toList();
@@ -196,7 +223,7 @@ public final class ScoreboardRegionParser {
         // A few scoreboards render the region as its own sidebar row.
         for (String line : lines) {
             Optional<String> region = normalizeRegion(line);
-            if (region.isPresent() && REGION_NAMES.containsValue(region.get())) {
+            if (region.isPresent() && KNOWN_REGION_NAMES.contains(region.get())) {
                 return region;
             }
         }
@@ -260,16 +287,48 @@ public final class ScoreboardRegionParser {
         }
 
         String candidate = rawValue.replace('\u00A0', ' ').trim();
+        if (NO_REGION_VALUE.matcher(candidate).matches()) {
+            return Optional.empty();
+        }
         candidate = LATENCY.matcher(candidate).replaceAll(" ");
         candidate = IGNORED_LABELS.matcher(candidate).replaceAll(" ");
-        candidate = candidate.replaceAll("\\b\\d+(?:[.,]\\d+)?\\b", " ");
-        candidate = candidate.replaceAll("[^A-Za-z0-9]+", " ").trim().replaceAll("\\s+", " ");
+        candidate = NON_ALPHANUMERIC.matcher(candidate).replaceAll(" ").trim();
+        candidate = WHITESPACE.matcher(candidate).replaceAll(" ");
         if (candidate.isEmpty()) {
             return Optional.empty();
         }
 
         String key = candidate.toLowerCase(Locale.ROOT);
+        if (MISSING_REGION_VALUES.contains(key)) {
+            return Optional.empty();
+        }
         String display = REGION_NAMES.get(key);
+        if (display != null) {
+            return Optional.of(display);
+        }
+
+        // Prefer a specific code if a scoreboard displays both its broad region and code.
+        Matcher regionCode = REGION_CODE_TOKEN.matcher(key);
+        if (regionCode.find()) {
+            display = REGION_NAMES.get(regionCode.group(1).toLowerCase(Locale.ROOT));
+            if (display != null) {
+                return Optional.of(display);
+            }
+        }
+
+        // Keep numbered region identifiers such as NA1 or EU2 intact.
+        if (CODE.matcher(key).matches()) {
+            return NON_REGION_TERMS.matcher(key).find()
+                    ? Optional.empty()
+                    : Optional.of(key.toUpperCase(Locale.ROOT));
+        }
+
+        key = NUMERIC_TOKEN.matcher(key).replaceAll(" ");
+        key = WHITESPACE.matcher(key).replaceAll(" ").trim();
+        if (key.isEmpty()) {
+            return Optional.empty();
+        }
+        display = REGION_NAMES.get(key);
         if (display != null) {
             return Optional.of(display);
         }
@@ -285,15 +344,30 @@ public final class ScoreboardRegionParser {
             }
         }
 
+        if (NON_REGION_TERMS.matcher(key).find()) {
+            return Optional.empty();
+        }
+
         if (CODE.matcher(key).matches()) {
             return Optional.of(key.toUpperCase(Locale.ROOT));
         }
 
-        if (key.matches("[\\p{L}]+(?: [\\p{L}]+){0,5}")) {
+        if (REGION_WORDS.matcher(key).matches()) {
             return Optional.of(toTitleCase(key));
         }
 
         return Optional.empty();
+    }
+
+    private static String codeFromDisplayName(String displayName) {
+        int codeStart = displayName.lastIndexOf('(');
+        if (codeStart < 0 || !displayName.endsWith(")")) {
+            return null;
+        }
+        String code = displayName.substring(codeStart + 1, displayName.length() - 1);
+        return REGION_ALIAS_CODE.matcher(code.toLowerCase(Locale.ROOT)).matches()
+                ? code
+                : null;
     }
 
     private static String toTitleCase(String value) {

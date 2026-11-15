@@ -12,7 +12,7 @@ import net.minecraft.text.Text;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +34,7 @@ public final class ClientStateReader {
         }
 
         ClientPlayerEntity player = client.player;
-        ScoreboardDetails scoreboardDetails = readSidebar(client.world.getScoreboard());
+        ScoreboardDetails scoreboardDetails = readSidebar(client.world.getScoreboard(), player);
 
         return Optional.of(new CoordinateSnapshot(
                 player.getBlockX(),
@@ -47,24 +47,25 @@ public final class ClientStateReader {
         ));
     }
 
-    private static ScoreboardDetails readSidebar(Scoreboard scoreboard) {
+    private static ScoreboardDetails readSidebar(Scoreboard scoreboard, ClientPlayerEntity player) {
         if (scoreboard == null) {
             return ScoreboardDetails.EMPTY;
         }
 
-        ScoreboardObjective objective = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
+        ScoreboardObjective objective = currentSidebarObjective(scoreboard, player);
         if (objective == null) {
             return ScoreboardDetails.EMPTY;
         }
 
         String server = clean(objective.getDisplayName());
-        Collection<ScoreboardEntry> entries = scoreboard.getScoreboardEntries(objective);
+        List<ScoreboardEntry> entries = scoreboard.getScoreboardEntries(objective).stream()
+                .filter(entry -> entry != null && !entry.hidden() && entry.owner() != null)
+                .sorted(Comparator.comparingInt(ScoreboardEntry::value).reversed()
+                        .thenComparing(ScoreboardEntry::owner, String.CASE_INSENSITIVE_ORDER))
+                .limit(15)
+                .toList();
         List<String> lines = new ArrayList<>(entries.size());
         for (ScoreboardEntry entry : entries) {
-            if (entry == null || entry.hidden()) {
-                continue;
-            }
-
             Text displayText = entry.display();
             if (displayText == null) {
                 Team team = scoreboard.getScoreHolderTeam(entry.owner());
@@ -78,6 +79,20 @@ public final class ClientStateReader {
 
         String region = ScoreboardRegionParser.findRegion(lines).orElse("Unknown");
         return new ScoreboardDetails(region, server.isBlank() ? "Unknown server" : server);
+    }
+
+    private static ScoreboardObjective currentSidebarObjective(Scoreboard scoreboard, ClientPlayerEntity player) {
+        Team team = scoreboard.getScoreHolderTeam(player.getNameForScoreboard());
+        if (team != null && team.getColor() != null && team.getColor().isColor()) {
+            ScoreboardDisplaySlot teamSlot = ScoreboardDisplaySlot.fromFormatting(team.getColor());
+            if (teamSlot != null) {
+                ScoreboardObjective teamObjective = scoreboard.getObjectiveForSlot(teamSlot);
+                if (teamObjective != null) {
+                    return teamObjective;
+                }
+            }
+        }
+        return scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
     }
 
     private static String clean(Text text) {

@@ -39,6 +39,7 @@ public final class CordClipperConfig {
     private final Path configPath;
     private final List<WebhookEndpoint> webhooks = new ArrayList<>();
     private int clipKeyCode = KEY_G;
+    private boolean needsRewrite;
 
     private CordClipperConfig(Path configPath) {
         this.configPath = configPath;
@@ -55,16 +56,20 @@ public final class CordClipperConfig {
         try (BufferedReader reader = Files.newBufferedReader(configPath)) {
             StoredConfig stored = GSON.fromJson(reader, StoredConfig.class);
             if (stored == null) {
+                config.needsRewrite = true;
                 return config;
             }
 
             if (isValidKeyCode(stored.clipKeyCode)) {
                 config.clipKeyCode = stored.clipKeyCode;
+            } else {
+                config.needsRewrite = true;
             }
 
             if (stored.webhooks != null) {
                 for (StoredWebhook entry : stored.webhooks) {
                     if (entry == null || entry.url == null || entry.url.isBlank()) {
+                        config.needsRewrite = true;
                         continue;
                     }
 
@@ -79,10 +84,14 @@ public final class CordClipperConfig {
                         config.webhooks.add(new WebhookEndpoint(id, label, entry.url.trim()));
                     } catch (RuntimeException ignored) {
                         // Skip an invalid entry without exposing its secret URL.
+                        config.needsRewrite = true;
                     }
                 }
+            } else {
+                config.needsRewrite = true;
             }
         } catch (IOException | RuntimeException ignored) {
+            config.needsRewrite = true;
             LOGGER.warn("Could not read Cord Clipper settings. Defaults will be used.");
         }
 
@@ -137,6 +146,29 @@ public final class CordClipperConfig {
         }
     }
 
+    /** Replaces all staged settings with one save, avoiding a write per webhook. */
+    public synchronized void replaceSettings(List<WebhookEndpoint> replacementWebhooks, int replacementKeyCode) {
+        if (replacementWebhooks == null) {
+            return;
+        }
+
+        List<WebhookEndpoint> safeWebhooks = new ArrayList<>(replacementWebhooks.size());
+        for (WebhookEndpoint endpoint : replacementWebhooks) {
+            if (endpoint != null) {
+                safeWebhooks.add(endpoint);
+            }
+        }
+        int safeKeyCode = isValidKeyCode(replacementKeyCode) ? replacementKeyCode : clipKeyCode;
+        if (webhooks.equals(safeWebhooks) && clipKeyCode == safeKeyCode && !needsRewrite) {
+            return;
+        }
+
+        webhooks.clear();
+        webhooks.addAll(safeWebhooks);
+        clipKeyCode = safeKeyCode;
+        save();
+    }
+
     private synchronized void save() {
         Path parent = configPath.getParent();
         Path temporaryPath = configPath.resolveSibling(FILE_NAME + ".tmp");
@@ -167,6 +199,7 @@ public final class CordClipperConfig {
             } catch (AtomicMoveNotSupportedException ignored) {
                 Files.move(temporaryPath, configPath, StandardCopyOption.REPLACE_EXISTING);
             }
+            needsRewrite = false;
         } catch (IOException | RuntimeException ignored) {
             try {
                 Files.deleteIfExists(temporaryPath);

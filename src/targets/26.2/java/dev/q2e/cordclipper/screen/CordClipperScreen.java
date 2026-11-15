@@ -157,13 +157,7 @@ public final class CordClipperScreen extends Screen {
 
     private void persistStagedSettings() {
         try {
-            for (WebhookEndpoint current : List.copyOf(config.getWebhooks())) {
-                config.removeWebhook(current.id());
-            }
-            for (WebhookEndpoint staged : stagedWebhooks) {
-                config.addWebhook(staged.label(), staged.url());
-            }
-            config.setClipKeyCode(stagedClipKeyCode);
+            config.replaceSettings(stagedWebhooks, stagedClipKeyCode);
         } catch (RuntimeException ignored) {
             // Settings failures stay out of the game UI; config logs contain no URL.
         }
