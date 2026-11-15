@@ -271,3 +271,16 @@ public final class CordClipperScreen extends Screen {
                 0xFFAAA092
         );
 
+        renderWebhookRows(context, mouseX, mouseY);
+        super.render(context, mouseX, mouseY, delta);
+    }
+
+    private void renderWebhookRows(DrawContext context, int mouseX, int mouseY) {
+        if (stagedWebhooks.isEmpty()) {
+            context.drawTextWithShadow(
+                    textRenderer,
+                    Text.literal("No webhooks configured"),
+                    panelX + 18,
+                    listTop + 5,
+                    0xFFAAA092
+            );
