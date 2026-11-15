@@ -11,3 +11,5 @@ public record WebhookEndpoint(String id, String label, String url) {
         id = Objects.requireNonNull(id, "id");
         label = label == null || label.isBlank() ? "Webhook" : label;
         url = Objects.requireNonNull(url, "url");
+    }
+}
