@@ -102,3 +102,16 @@ public final class CordClipperConfig {
                 : label.trim();
         webhooks.add(new WebhookEndpoint(UUID.randomUUID().toString(), safeLabel, url.trim()));
         save();
+    }
+
+    public synchronized boolean removeWebhook(String id) {
+        if (id == null || id.isBlank()) {
+            return false;
+        }
+
+        boolean removed = webhooks.removeIf(endpoint -> endpoint.id().equals(id));
+        if (removed) {
+            save();
+        }
+        return removed;
+    }
