@@ -63,3 +63,14 @@ public final class CordClipperClient implements ClientModInitializer {
 
     private static void clipCurrentCoordinates(MinecraftClient client) {
         try {
+            Optional<CoordinateSnapshot> snapshot = ClientStateReader.capture(client);
+            snapshot.ifPresent(coordinates ->
+                    DiscordWebhookSender.sendAll(config.getWebhooks(), coordinates)
+            );
+        } catch (RuntimeException exception) {
+            // Clipping is intentionally silent. Keep diagnostics out of the
+            // game UI and avoid logging any payload or webhook credential.
+            LOGGER.warn("Could not capture or submit clipped coordinates.");
+        }
+    }
+}
