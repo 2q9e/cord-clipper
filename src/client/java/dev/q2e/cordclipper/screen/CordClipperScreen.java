@@ -284,3 +284,16 @@ public final class CordClipperScreen extends Screen {
                     listTop + 5,
                     0xFFAAA092
             );
+            return;
+        }
+
+        for (int row = 0; row < visibleRows; row++) {
+            int endpointIndex = firstVisibleWebhook + row;
+            if (endpointIndex >= stagedWebhooks.size()) {
+                break;
+            }
+
+            int y = listTop + row * ROW_HEIGHT;
+            boolean hovered = mouseX >= panelX + 12 && mouseX <= panelX + panelWidth - 12
+                    && mouseY >= y && mouseY < y + ROW_CONTENT_HEIGHT;
+            int rowColor = hovered ? 0xA03B2B20 : 0x80291F19;
