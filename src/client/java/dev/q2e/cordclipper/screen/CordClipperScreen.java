@@ -63,3 +63,16 @@ public final class CordClipperScreen extends Screen {
         clearChildren();
 
         panelWidth = Math.min(460, Math.max(300, width - 24));
+        panelHeight = Math.min(360, Math.max(220, height - 24));
+        panelX = (width - panelWidth) / 2;
+        panelY = (height - panelHeight) / 2;
+
+        int contentX = panelX + 14;
+        int contentWidth = panelWidth - 28;
+
+        addDrawableChild(ButtonWidget.builder(
+                Text.translatable("screen.cord_clipper.clip_now"),
+                button -> clipNow()
+        ).dimensions(contentX, panelY + 38, contentWidth, 20).build());
+
+        clipKeyButton = addDrawableChild(ButtonWidget.builder(
