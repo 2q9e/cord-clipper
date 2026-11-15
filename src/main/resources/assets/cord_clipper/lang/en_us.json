@@ -1,0 +1,13 @@
+{
+  "key.cord_clipper.open": "Open Cord Clipper",
+  "screen.cord_clipper.title": "Cord Clipper",
+  "screen.cord_clipper.clip_now": "Clip coordinates",
+  "screen.cord_clipper.add_webhook": "Add webhook",
+  "screen.cord_clipper.remove": "Remove",
+  "screen.cord_clipper.clip_key": "Clip key: %s",
+  "screen.cord_clipper.save": "Save",
+  "screen.cord_clipper.cancel": "Cancel",
+  "screen.cord_clipper.webhooks": "Webhook destinations",
+  "screen.cord_clipper.url_hint": "Paste Discord webhook URL",
+  "screen.cord_clipper.set_key": "Press a key..."
+}
