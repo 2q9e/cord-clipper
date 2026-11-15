@@ -102,3 +102,6 @@ public final class ClientStateReader {
     }
 
     private record ScoreboardDetails(String region, String server) {
+        private static final ScoreboardDetails EMPTY = new ScoreboardDetails("Unknown", "Unknown server");
+    }
+}
