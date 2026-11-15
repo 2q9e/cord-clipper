@@ -154,3 +154,16 @@ public final class CordClipperScreen extends Screen {
         while (labels.contains("Webhook " + number)) {
             number++;
         }
+        return "Webhook " + number;
+    }
+
+    private void persistStagedSettings() {
+        try {
+            for (WebhookEndpoint current : List.copyOf(config.getWebhooks())) {
+                config.removeWebhook(current.id());
+            }
+            for (WebhookEndpoint staged : stagedWebhooks) {
+                config.addWebhook(staged.label(), staged.url());
+            }
+            config.setClipKeyCode(stagedClipKeyCode);
+        } catch (RuntimeException ignored) {
