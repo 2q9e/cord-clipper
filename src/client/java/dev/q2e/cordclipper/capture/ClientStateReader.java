@@ -50,3 +50,16 @@ public final class ClientStateReader {
                 scoreboardDetails.region(),
                 scoreboardDetails.server(),
                 client.world.getRegistryKey().getValue().toString(),
+                Instant.now()
+        ));
+    }
+
+    private static ScoreboardDetails readSidebar(Scoreboard scoreboard) {
+        if (scoreboard == null) {
+            return ScoreboardDetails.EMPTY;
+        }
+
+        ScoreboardObjective objective = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.SIDEBAR);
+        if (objective == null) {
+            return ScoreboardDetails.EMPTY;
+        }
