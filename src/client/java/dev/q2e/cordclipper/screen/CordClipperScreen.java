@@ -50,3 +50,16 @@ public final class CordClipperScreen extends Screen {
     private ButtonWidget clipKeyButton;
 
     public CordClipperScreen(Screen parent, CordClipperConfig config, Runnable clipAction) {
+        super(Text.translatable("screen.cord_clipper.title"));
+        this.parent = parent;
+        this.config = config;
+        this.clipAction = clipAction;
+        this.stagedWebhooks.addAll(config.getWebhooks());
+        this.stagedClipKeyCode = config.getClipKeyCode();
+    }
+
+    @Override
+    protected void init() {
+        clearChildren();
+
+        panelWidth = Math.min(460, Math.max(300, width - 24));
