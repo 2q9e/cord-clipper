@@ -89,3 +89,16 @@ if exist "%JAVA_EXE%" goto execute
 
 1>&2 echo.
 1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+1>&2 echo.
+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
+1>&2 echo location of your Java installation.
+
+"%COMSPEC%" /c exit 1
+goto exitWithErrorLevel
+
+:execute
+@rem Setup the command line
+
+
+
+@rem Execute gradlew
