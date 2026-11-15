@@ -21,6 +21,7 @@ Support for **26.4-snapshot-8 is preview-only**. It does not promise support for
 - Open the settings screen with the **Open Cord Clipper** keybind in Minecraft's **Options → Controls**.
 - Configure the separate clip key in the Cord Clipper screen, or use its **Clip Now** button.
 - Read the local player's position without opening F3 or a screen to reveal coordinates. The mod does not send Minecraft packets to request them.
+- Recognize scoreboard region labels such as `NA`, `NAE`, `NAW`, and `EU`, and include readable region names in the webhook embed.
 - Configure multiple Discord webhooks. Each clip sends a separate message to each configured destination.
 - Send embeds with mentions disabled. Clipping has no in-game success or error notifications; failures are written to the log.
 - Add no Cord Clipper cooldown or deduplication. Discord's own rate limits may delay or reject rapid sends.

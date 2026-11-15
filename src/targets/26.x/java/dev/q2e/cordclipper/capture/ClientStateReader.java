@@ -15,20 +15,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Reads state already present on the client. It never opens the debug screen,
  * queries the server, or sends a Minecraft packet or command.
  */
 public final class ClientStateReader {
-    private static final Pattern REGION_AT_END_OF_PING_LINE = Pattern.compile(
-            "(?i)(?:\\bping\\b|\\b\\d+(?:\\.\\d+)?\\s*ms\\b).*?\\(([a-z]{2,5})\\)\\s*$"
-    );
-
     private ClientStateReader() {
     }
 
@@ -88,18 +81,8 @@ public final class ClientStateReader {
             }
         }
 
-        String region = findRegion(lines).orElse("Unknown");
+        String region = ScoreboardRegionParser.findRegion(lines).orElse("Unknown");
         return new ScoreboardDetails(region, server.isBlank() ? "Unknown server" : server);
-    }
-
-    private static Optional<String> findRegion(List<String> lines) {
-        for (String line : lines) {
-            Matcher matcher = REGION_AT_END_OF_PING_LINE.matcher(line);
-            if (matcher.find()) {
-                return Optional.of(matcher.group(1).toUpperCase(Locale.ROOT));
-            }
-        }
-        return Optional.empty();
     }
 
     private static String clean(Component component) {
