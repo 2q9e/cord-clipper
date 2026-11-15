@@ -1,0 +1,13 @@
+package dev.q2e.cordclipper.webhook;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import dev.q2e.cordclipper.config.WebhookEndpoint;
+import dev.q2e.cordclipper.model.CoordinateSnapshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
