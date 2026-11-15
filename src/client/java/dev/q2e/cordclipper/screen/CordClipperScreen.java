@@ -102,3 +102,16 @@ public final class CordClipperScreen extends Screen {
                 button -> addWebhook()
         ).dimensions(contentX + fieldWidth + 8, panelY + 96, addButtonWidth, 20).build());
 
+        listTop = panelY + 145;
+        int bottomButtonY = panelY + panelHeight - 32;
+        listBottom = bottomButtonY - 9;
+        visibleRows = Math.max(0, (listBottom - listTop) / ROW_HEIGHT);
+        clampScrollOffset();
+
+        int gap = 8;
+        int buttonWidth = (contentWidth - gap) / 2;
+        addDrawableChild(ButtonWidget.builder(
+                Text.translatable("screen.cord_clipper.save"),
+                button -> {
+                    persistStagedSettings();
+                    closeToParent();
