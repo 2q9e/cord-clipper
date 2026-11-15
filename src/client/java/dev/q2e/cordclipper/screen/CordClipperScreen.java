@@ -115,3 +115,16 @@ public final class CordClipperScreen extends Screen {
                 button -> {
                     persistStagedSettings();
                     closeToParent();
+                }
+        ).dimensions(contentX, bottomButtonY, buttonWidth, 20).build());
+
+        addDrawableChild(ButtonWidget.builder(
+                Text.translatable("screen.cord_clipper.cancel"),
+                button -> closeToParent()
+        ).dimensions(contentX + buttonWidth + gap, bottomButtonY, buttonWidth, 20).build());
+    }
+
+    private void clipNow() {
+        persistStagedSettings();
+        if (clipAction != null) {
+            clipAction.run();
