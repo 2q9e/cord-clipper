@@ -193,3 +193,16 @@ public final class DiscordWebhookSender {
                 return Math.max(1L, (long) Math.ceil(seconds * 1000.0));
             }
         } catch (NumberFormatException ignored) {
+            // Retry-After may also be an HTTP date.
+        }
+
+        try {
+            Instant retryAt = ZonedDateTime.parse(value, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant();
+            return Math.max(1L, Duration.between(Instant.now(), retryAt).toMillis());
+        } catch (RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    private static JsonObject createPayload(CoordinateSnapshot snapshot) {
+        JsonObject embed = new JsonObject();
