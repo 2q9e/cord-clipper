@@ -8,7 +8,6 @@ import dev.q2e.cordclipper.screen.CordClipperScreen;
 import dev.q2e.cordclipper.webhook.DiscordWebhookSender;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ public final class CordClipperClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         config = CordClipperConfig.load();
-        openScreenKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+        openScreenKey = FabricKeyMappingRegistration.register(new KeyMapping(
                 "key.cord_clipper.open",
                 InputConstants.Type.KEYSYM,
                 InputConstants.KEY_O,
