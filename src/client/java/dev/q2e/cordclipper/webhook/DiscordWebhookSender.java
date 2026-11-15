@@ -232,3 +232,16 @@ public final class DiscordWebhookSender {
         allowedMentions.add("parse", new JsonArray());
         allowedMentions.add("users", new JsonArray());
         allowedMentions.add("roles", new JsonArray());
+        allowedMentions.addProperty("replied_user", false);
+        payload.add("allowed_mentions", allowedMentions);
+
+        // Discord's SUPPRESS_NOTIFICATIONS message flag is bit 12.
+        payload.addProperty("flags", SUPPRESS_NOTIFICATIONS_FLAG);
+        return payload;
+    }
+
+    private static void addField(JsonArray fields, String name, String value, boolean inline) {
+        JsonObject field = new JsonObject();
+        field.addProperty("name", name);
+        field.addProperty("value", value);
+        field.addProperty("inline", inline);
