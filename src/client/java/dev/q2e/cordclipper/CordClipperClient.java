@@ -24,3 +24,16 @@ public final class CordClipperClient implements ClientModInitializer {
     private static KeyBinding openScreenKey;
     private static boolean clipKeyWasDown;
 
+    @Override
+    public void onInitializeClient() {
+        config = CordClipperConfig.load();
+        openScreenKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.cord_clipper.open",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_O,
+                KeyBinding.Category.MISC
+        ));
+
+        ClientTickEvents.END_CLIENT_TICK.register(CordClipperClient::onClientTick);
+        LOGGER.info("Cord Clipper initialized.");
+    }
