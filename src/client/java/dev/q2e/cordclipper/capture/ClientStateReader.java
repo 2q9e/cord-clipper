@@ -63,3 +63,16 @@ public final class ClientStateReader {
         if (objective == null) {
             return ScoreboardDetails.EMPTY;
         }
+
+        String server = clean(objective.getDisplayName());
+        Collection<ScoreboardEntry> entries = scoreboard.getScoreboardEntries(objective);
+        List<String> lines = new ArrayList<>(entries.size());
+        for (ScoreboardEntry entry : entries) {
+            if (entry == null || entry.hidden()) {
+                continue;
+            }
+
+            Text displayText = entry.display();
+            if (displayText == null) {
+                Team team = scoreboard.getScoreHolderTeam(entry.owner());
+                displayText = team == null ? entry.name() : team.decorateName(entry.name());
