@@ -11,3 +11,16 @@ base {
 repositories {
 }
 
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"cord_clipper" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
