@@ -141,3 +141,16 @@ public final class CordClipperScreen extends Screen {
         }
 
         // Do not leave a saved webhook URL on screen after it is added.
+        webhookUrlField.setText("");
+    }
+
+    private String nextWebhookLabel() {
+        Set<String> labels = new HashSet<>();
+        for (WebhookEndpoint endpoint : stagedWebhooks) {
+            labels.add(endpoint.label());
+        }
+
+        int number = 1;
+        while (labels.contains("Webhook " + number)) {
+            number++;
+        }
