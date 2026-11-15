@@ -24,3 +24,6 @@ Build from the repository root:
 
 ~~~powershell
 .\gradlew.bat build
+~~~
+
+Copy the generated JAR from **build/libs/** into the Minecraft instance's **mods** folder, then launch the Fabric 1.21.11 profile.
