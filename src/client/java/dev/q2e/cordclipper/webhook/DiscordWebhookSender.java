@@ -102,3 +102,16 @@ public final class DiscordWebhookSender {
                                         () -> send(endpoint, body),
                                         retryAfterMillis,
                                         TimeUnit.MILLISECONDS
+                                );
+                            } else {
+                                LOGGER.warn("Discord rate limited a webhook without a usable retry time");
+                            }
+                            return;
+                        }
+
+                        LOGGER.warn("Discord webhook delivery failed with HTTP status {}", status);
+                    });
+        } catch (RuntimeException exception) {
+            // Scheduling failures are logged without exposing the configured URL.
+            LOGGER.warn("Could not schedule Discord webhook delivery ({})",
+                    exception.getClass().getSimpleName());
