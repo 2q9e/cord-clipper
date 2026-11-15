@@ -24,3 +24,16 @@ import java.util.UUID;
  *
  * Webhook URLs are stored so the user only has to enter them once. Callers
  * should display only endpoint labels and must never log URLs.
+ */
+public final class CordClipperConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger("cord_clipper");
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final String FILE_NAME = "cord-clipper.json";
+
+    private final Path configPath;
+    private final List<WebhookEndpoint> webhooks = new ArrayList<>();
+    private int clipKeyCode = GLFW.GLFW_KEY_G;
+
+    private CordClipperConfig(Path configPath) {
+        this.configPath = configPath;
+    }
