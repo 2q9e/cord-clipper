@@ -141,3 +141,16 @@ public final class CordClipperConfig {
             StoredWebhook entry = new StoredWebhook();
             entry.id = endpoint.id();
             entry.label = endpoint.label();
+            entry.url = endpoint.url();
+            stored.webhooks.add(entry);
+        }
+
+        try {
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+
+            try (BufferedWriter writer = Files.newBufferedWriter(temporaryPath)) {
+                GSON.toJson(stored, writer);
+            }
+
