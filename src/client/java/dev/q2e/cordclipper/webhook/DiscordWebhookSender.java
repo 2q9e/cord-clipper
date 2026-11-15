@@ -63,3 +63,16 @@ public final class DiscordWebhookSender {
             }
         }
     }
+
+    private static void send(WebhookEndpoint endpoint, String body) {
+        URI uri;
+        try {
+            uri = validatedWebhookUri(endpoint.url());
+        } catch (RuntimeException exception) {
+            // Avoid logging exception messages because URI parsing errors may contain the secret URL.
+            LOGGER.warn("Skipped a configured Discord webhook because its URL is invalid");
+            return;
+        }
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder(uri)
