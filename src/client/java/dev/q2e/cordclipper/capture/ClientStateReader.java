@@ -76,3 +76,16 @@ public final class ClientStateReader {
             if (displayText == null) {
                 Team team = scoreboard.getScoreHolderTeam(entry.owner());
                 displayText = team == null ? entry.name() : team.decorateName(entry.name());
+            }
+            String line = clean(displayText);
+            if (!line.isBlank()) {
+                lines.add(line);
+            }
+        }
+
+        String region = findRegion(lines).orElse("Unknown");
+        return new ScoreboardDetails(region, server.isBlank() ? "Unknown server" : server);
+    }
+
+    private static Optional<String> findRegion(List<String> lines) {
+        for (String line : lines) {
