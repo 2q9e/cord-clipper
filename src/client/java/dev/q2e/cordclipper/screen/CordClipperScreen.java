@@ -258,3 +258,16 @@ public final class CordClipperScreen extends Screen {
                 Text.translatable("screen.cord_clipper.title"),
                 width / 2,
                 panelY + 15,
+                0xFFFFFFFF
+        );
+
+        Text webhookHeading = Text.translatable("screen.cord_clipper.webhooks");
+        context.drawTextWithShadow(textRenderer, webhookHeading, panelX + 14, panelY + 128, 0xFFE0D5C9);
+        context.drawTextWithShadow(
+                textRenderer,
+                Text.literal("(" + stagedWebhooks.size() + ")"),
+                panelX + 14 + textRenderer.getWidth(webhookHeading) + 5,
+                panelY + 128,
+                0xFFAAA092
+        );
+
