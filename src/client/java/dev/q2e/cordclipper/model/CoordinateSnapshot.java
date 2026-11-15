@@ -11,3 +11,16 @@ public record CoordinateSnapshot(
         int y,
         int z,
         String region,
+        String server,
+        String dimension,
+        Instant capturedAt
+) {
+    public CoordinateSnapshot {
+        region = nonBlankOr(region, "Unknown");
+        server = nonBlankOr(server, "Unknown server");
+        dimension = nonBlankOr(dimension, "Unknown");
+        capturedAt = Objects.requireNonNullElseGet(capturedAt, Instant::now);
+    }
+
+    private static String nonBlankOr(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
