@@ -63,3 +63,16 @@ public final class CordClipperConfig {
                     }
 
                     String id = entry.id == null || entry.id.isBlank()
+                            ? UUID.randomUUID().toString()
+                            : entry.id;
+                    String label = entry.label == null || entry.label.isBlank()
+                            ? "Webhook " + (config.webhooks.size() + 1)
+                            : entry.label;
+
+                    try {
+                        config.webhooks.add(new WebhookEndpoint(id, label, entry.url.trim()));
+                    } catch (RuntimeException ignored) {
+                        // Skip an invalid entry without exposing its secret URL.
+                    }
+                }
+            }
