@@ -167,3 +167,16 @@ public final class CordClipperConfig {
             } catch (IOException cleanupIgnored) {
                 // Keep failures silent in-game; diagnostics contain no URL.
             }
+            LOGGER.warn("Could not save Cord Clipper settings.");
+        }
+    }
+
+    private static boolean isValidKeyCode(int keyCode) {
+        return keyCode == GLFW.GLFW_KEY_UNKNOWN
+                || (keyCode >= GLFW.GLFW_KEY_SPACE
+                && keyCode <= GLFW.GLFW_KEY_LAST
+                && keyCode != GLFW.GLFW_KEY_F3);
+    }
+
+    private static final class StoredConfig {
+        private int clipKeyCode = GLFW.GLFW_KEY_G;
