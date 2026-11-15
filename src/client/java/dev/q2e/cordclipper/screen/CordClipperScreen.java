@@ -219,3 +219,16 @@ public final class CordClipperScreen extends Screen {
                 && mouseY >= listTop && mouseY < listBottom) {
             int visibleIndex = (int) ((mouseY - listTop) / ROW_HEIGHT);
             int endpointIndex = firstVisibleWebhook + visibleIndex;
+            if (visibleIndex < visibleRows && endpointIndex < stagedWebhooks.size()
+                    && mouseX >= panelX + panelWidth - 82) {
+                stagedWebhooks.remove(endpointIndex);
+                clampScrollOffset();
+                return true;
+            }
+        }
+        return super.mouseClicked(click, doubled);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (mouseX >= panelX && mouseX <= panelX + panelWidth
