@@ -180,3 +180,16 @@ public final class DiscordWebhookSender {
         }
 
         return null;
+    }
+
+    private static Long parseRetryAfter(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        try {
+            double seconds = Double.parseDouble(value.trim());
+            if (Double.isFinite(seconds) && seconds >= 0) {
+                return Math.max(1L, (long) Math.ceil(seconds * 1000.0));
+            }
+        } catch (NumberFormatException ignored) {
