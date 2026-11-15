@@ -37,3 +37,16 @@ public final class DiscordWebhookSender {
             .followRedirects(HttpClient.Redirect.NEVER)
             .build();
 
+    private static final ScheduledExecutorService RETRY_SCHEDULER =
+            Executors.newSingleThreadScheduledExecutor(runnable -> {
+                Thread thread = new Thread(runnable, "Cord Clipper webhook retries");
+                thread.setDaemon(true);
+                return thread;
+            });
+
+    private DiscordWebhookSender() {
+    }
+
+    /**
+     * Submits one independent webhook message for every configured destination.
+     * This method is safe to call from the Minecraft client thread.
