@@ -219,7 +219,7 @@ public final class DiscordWebhookSender {
     private static JsonObject createPayload(CoordinateSnapshot snapshot) {
         JsonObject embed = new JsonObject();
         embed.addProperty("title", "Coordinates clipped");
-        embed.addProperty("color", 0x8B5CF6);
+        embed.addProperty("color", 0xFFB6C1);
         embed.addProperty("timestamp", snapshot.capturedAt().toString());
 
         JsonArray fields = new JsonArray();
