@@ -128,3 +128,16 @@ public final class CordClipperConfig {
         if (clipKeyCode != keyCode) {
             clipKeyCode = keyCode;
             save();
+        }
+    }
+
+    private synchronized void save() {
+        Path parent = configPath.getParent();
+        Path temporaryPath = configPath.resolveSibling(FILE_NAME + ".tmp");
+        StoredConfig stored = new StoredConfig();
+        stored.clipKeyCode = clipKeyCode;
+        stored.webhooks = new ArrayList<>(webhooks.size());
+        for (WebhookEndpoint endpoint : webhooks) {
+            StoredWebhook entry = new StoredWebhook();
+            entry.id = endpoint.id();
+            entry.label = endpoint.label();
