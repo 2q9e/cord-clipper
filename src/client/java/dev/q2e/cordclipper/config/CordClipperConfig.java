@@ -50,3 +50,16 @@ public final class CordClipperConfig {
             StoredConfig stored = GSON.fromJson(reader, StoredConfig.class);
             if (stored == null) {
                 return config;
+            }
+
+            if (isValidKeyCode(stored.clipKeyCode)) {
+                config.clipKeyCode = stored.clipKeyCode;
+            }
+
+            if (stored.webhooks != null) {
+                for (StoredWebhook entry : stored.webhooks) {
+                    if (entry == null || entry.url == null || entry.url.isBlank()) {
+                        continue;
+                    }
+
+                    String id = entry.id == null || entry.id.isBlank()
