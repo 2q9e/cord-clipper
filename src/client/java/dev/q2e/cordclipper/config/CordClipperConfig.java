@@ -115,3 +115,16 @@ public final class CordClipperConfig {
         }
         return removed;
     }
+
+    public synchronized int getClipKeyCode() {
+        return clipKeyCode;
+    }
+
+    public synchronized void setClipKeyCode(int keyCode) {
+        if (!isValidKeyCode(keyCode)) {
+            return;
+        }
+
+        if (clipKeyCode != keyCode) {
+            clipKeyCode = keyCode;
+            save();
