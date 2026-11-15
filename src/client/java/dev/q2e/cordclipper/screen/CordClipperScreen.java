@@ -206,3 +206,16 @@ public final class CordClipperScreen extends Screen {
                 clipKeyButton.setMessage(clipKeyMessage());
             }
             return true;
+        }
+        return super.keyPressed(input);
+    }
+
+    @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        double mouseX = click.x();
+        double mouseY = click.y();
+        if (click.button() == GLFW.GLFW_MOUSE_BUTTON_1
+                && mouseX >= panelX + 8 && mouseX <= panelX + panelWidth - 8
+                && mouseY >= listTop && mouseY < listBottom) {
+            int visibleIndex = (int) ((mouseY - listTop) / ROW_HEIGHT);
+            int endpointIndex = firstVisibleWebhook + visibleIndex;
