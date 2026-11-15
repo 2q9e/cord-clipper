@@ -297,3 +297,16 @@ public final class CordClipperScreen extends Screen {
             boolean hovered = mouseX >= panelX + 12 && mouseX <= panelX + panelWidth - 12
                     && mouseY >= y && mouseY < y + ROW_CONTENT_HEIGHT;
             int rowColor = hovered ? 0xA03B2B20 : 0x80291F19;
+            context.fill(panelX + 12, y, panelX + panelWidth - 12, y + ROW_CONTENT_HEIGHT, rowColor);
+            drawBorder(context, panelX + 12, y, panelWidth - 24, ROW_CONTENT_HEIGHT, 0xFF000000);
+
+            // Only the generic endpoint label is displayed; the URL is never rendered.
+            context.drawTextWithShadow(
+                    textRenderer,
+                    Text.literal("Webhook " + (endpointIndex + 1)),
+                    panelX + 20,
+                    y + 6,
+                    0xFFFFFFFF
+            );
+
+            int removeX = panelX + panelWidth - 82;
