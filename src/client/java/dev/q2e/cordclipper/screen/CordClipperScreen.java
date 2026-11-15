@@ -76,3 +76,16 @@ public final class CordClipperScreen extends Screen {
         ).dimensions(contentX, panelY + 38, contentWidth, 20).build());
 
         clipKeyButton = addDrawableChild(ButtonWidget.builder(
+                clipKeyMessage(),
+                button -> {
+                    listeningForClipKey = true;
+                    clipKeyButton.setMessage(Text.literal("Press a key…"));
+                }
+        ).dimensions(contentX, panelY + 64, contentWidth, 20).build());
+
+        int addButtonWidth = 78;
+        int fieldWidth = contentWidth - addButtonWidth - 8;
+        webhookUrlField = new TextFieldWidget(
+                textRenderer,
+                contentX,
+                panelY + 96,
