@@ -76,3 +76,16 @@ public final class CordClipperConfig {
                     }
                 }
             }
+        } catch (IOException | RuntimeException ignored) {
+            LOGGER.warn("Could not read Cord Clipper settings. Defaults will be used.");
+        }
+
+        return config;
+    }
+
+    public synchronized List<WebhookEndpoint> getWebhooks() {
+        return List.copyOf(webhooks);
+    }
+
+    /**
+     * Adds a destination and saves it immediately. The caller should clear
