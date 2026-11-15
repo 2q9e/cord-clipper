@@ -115,3 +115,16 @@ public final class DiscordWebhookSender {
             // Scheduling failures are logged without exposing the configured URL.
             LOGGER.warn("Could not schedule Discord webhook delivery ({})",
                     exception.getClass().getSimpleName());
+        }
+    }
+
+    /**
+     * Accept only HTTPS Discord webhook endpoints. This prevents a locally
+     * edited config from turning the coordinate sender into an arbitrary HTTP client.
+     */
+    private static URI validatedWebhookUri(String rawUrl) {
+        URI uri = URI.create(rawUrl);
+        String host = uri.getHost();
+        String path = uri.getRawPath();
+        if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null
+                || uri.getRawUserInfo() != null || (uri.getPort() != -1 && uri.getPort() != 443)
