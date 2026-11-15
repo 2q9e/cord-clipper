@@ -237,7 +237,7 @@ public final class CordClipperScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
+        context.fill(0, 0, width, height, 0x80000000);
 
         context.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xD01C1510);
         drawBorder(context, panelX, panelY, panelWidth, panelHeight, 0xFF000000);

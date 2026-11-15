@@ -31,7 +31,7 @@ public final class CordClipperClient implements ClientModInitializer {
                 "key.cord_clipper.open",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_O,
-                KeyBinding.MISC_CATEGORY
+                "key.categories.cord_clipper"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(CordClipperClient::onClientTick);

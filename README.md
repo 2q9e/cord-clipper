@@ -18,7 +18,7 @@ Support for **26.4-snapshot-8 is preview-only**. It does not promise support for
 
 ## Features
 
-- Open the settings screen with the **Open Cord Clipper** keybind in Minecraft's **Options → Controls**.
+- Open the settings screen with **Cord Clipper → Open Cord Clipper** in Minecraft's **Options → Controls** (default: **O**).
 - Configure the separate clip key in the Cord Clipper screen, or use its **Clip Now** button.
 - Read the local player's position without opening F3 or a screen to reveal coordinates. The mod does not send Minecraft packets to request them.
 - Recognize region codes and names across different scoreboard layouts, including North America, Europe, Asia-Pacific, Oceania, South America, Africa, and Middle East variants. Unknown codes and region names are preserved in the webhook embed.

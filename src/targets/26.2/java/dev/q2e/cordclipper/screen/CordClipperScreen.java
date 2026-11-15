@@ -246,7 +246,7 @@ public final class CordClipperScreen extends Screen {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        extractBackground(graphics, mouseX, mouseY, delta);
+        graphics.fill(0, 0, width, height, 0x80000000);
 
         graphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xD01C1510);
         drawBorder(graphics, panelX, panelY, panelWidth, panelHeight, 0xFF000000);

@@ -239,7 +239,7 @@ public final class CordClipperScreen extends Screen {
     }
 
     public void extractBackground(GuiGraphicsExtractor graphics) {
-        extractMenuBackground(graphics);
+        graphics.fill(0, 0, width, height, 0x80000000);
     }
 
     /** 26.4's screen extraction signature. */
@@ -254,7 +254,7 @@ public final class CordClipperScreen extends Screen {
 
     /** 26.3 passes cursor and frame data to the screen's background extraction callback. */
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        extractMenuBackground(graphics);
+        graphics.fill(0, 0, width, height, 0x80000000);
     }
 
     private void extractScreenContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {

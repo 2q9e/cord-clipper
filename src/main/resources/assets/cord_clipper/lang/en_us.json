@@ -1,5 +1,7 @@
 {
   "key.cord_clipper.open": "Open Cord Clipper",
+  "key.categories.cord_clipper": "Cord Clipper",
+  "key.category.cord_clipper.main": "Cord Clipper",
   "screen.cord_clipper.title": "Cord Clipper",
   "screen.cord_clipper.clip_now": "Clip coordinates",
   "screen.cord_clipper.add_webhook": "Add webhook",

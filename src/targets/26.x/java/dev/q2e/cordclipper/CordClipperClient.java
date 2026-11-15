@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,8 @@ public final class CordClipperClient implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger("cord_clipper");
     private static final int GLFW_UNKNOWN = -1;
     private static final int GLFW_F3 = 292;
+    private static final KeyMapping.Category KEY_CATEGORY =
+            KeyMapping.Category.register(Identifier.fromNamespaceAndPath("cord_clipper", "main"));
 
     private static CordClipperConfig config;
     private static KeyMapping openScreenKey;
@@ -33,7 +36,7 @@ public final class CordClipperClient implements ClientModInitializer {
                 "key.cord_clipper.open",
                 InputConstants.Type.KEYBOARD,
                 InputConstants.KEY_O,
-                KeyMapping.Category.MISC
+                KEY_CATEGORY
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(CordClipperClient::onClientTick);
