@@ -38,7 +38,8 @@ dependencies {
 	}
 	def modConfiguration = targetMappings ? 'modImplementation' : 'implementation'
 	add(modConfiguration, "net.fabricmc:fabric-loader:${rootProject.loader_version}")
-	def apiVersion = findProperty('fabric_api_override') ?: targetFabricApi
+	def apiOverrideProperty = "fabric_api_override_${project.name}"
+	def apiVersion = findProperty(apiOverrideProperty) ?: targetFabricApi
 	add(modConfiguration, "net.fabricmc.fabric-api:fabric-api:${apiVersion}")
 }
 

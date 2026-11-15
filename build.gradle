@@ -34,7 +34,7 @@ sourceSets {
 	}
 }
 
-def selectedFabricApi = project.findProperty('fabric_api_override') ?: project.fabric_api_version
+def selectedFabricApi = project.findProperty('fabric_api_override_root') ?: project.fabric_api_version
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"

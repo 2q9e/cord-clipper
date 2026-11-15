@@ -114,9 +114,12 @@ try {
             Write-Host ('Progress {0}/{1} ({2}%): {3} / {4}' -f $caseIndex, $totalCount, $percent, $case.TargetName, $case.ApiVersion)
         }
 
-        # Keep the override as one argument. In particular, do not URI-encode
-        # or split the plus sign in Fabric's version coordinate.
-        $overrideArgument = '-Pfabric_api_override=' + $case.ApiVersion
+        # Scope each override to the selected project. Gradle configures every
+        # target during a build, and a global override would apply an API
+        # artifact from one Minecraft mapping namespace to every other target.
+        # Keep the coordinate as one argument so the plus sign remains intact.
+        $projectName = if ($case.ProjectPath -eq ':') { 'root' } else { $case.ProjectPath.TrimStart(':') }
+        $overrideArgument = '-Pfabric_api_override_' + $projectName + '=' + $case.ApiVersion
         $arguments = @(
             $case.TaskPath,
             '--console=plain',
