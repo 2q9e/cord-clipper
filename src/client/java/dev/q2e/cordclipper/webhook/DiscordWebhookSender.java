@@ -128,3 +128,16 @@ public final class DiscordWebhookSender {
         String path = uri.getRawPath();
         if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null
                 || uri.getRawUserInfo() != null || (uri.getPort() != -1 && uri.getPort() != 443)
+                || uri.getRawFragment() != null || !isDiscordHost(host)
+                || path == null
+                || !path.matches("/api(?:/v[0-9]+)?/webhooks/[^/]+/[^/]+/?")) {
+            throw new IllegalArgumentException("Not a Discord webhook URL");
+        }
+
+        String query = uri.getRawQuery();
+        String preservedQuery = query == null ? "" : java.util.Arrays.stream(query.split("&"))
+                .filter(part -> !part.toLowerCase(Locale.ROOT).startsWith("wait="))
+                .filter(part -> !part.isBlank())
+                .collect(java.util.stream.Collectors.joining("&"));
+        String requestQuery = preservedQuery.isBlank() ? "wait=true" : preservedQuery + "&wait=true";
+        String requestUrl = uri.getScheme() + "://" + uri.getRawAuthority()
