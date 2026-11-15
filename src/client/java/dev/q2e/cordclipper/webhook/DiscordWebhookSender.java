@@ -24,3 +24,16 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Sends coordinate embeds without blocking Minecraft's client thread.
+ *
+ * <p>Every invocation submits a distinct request for each configured endpoint.
+ * This class deliberately adds no cooldown, debounce, or deduplication.</p>
+ */
+public final class DiscordWebhookSender {
+    private static final Logger LOGGER = LoggerFactory.getLogger("cord_clipper");
+    private static final int SUPPRESS_NOTIFICATIONS_FLAG = 1 << 12;
+
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .followRedirects(HttpClient.Redirect.NEVER)
+            .build();
+
