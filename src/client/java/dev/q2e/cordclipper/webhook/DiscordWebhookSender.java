@@ -141,3 +141,16 @@ public final class DiscordWebhookSender {
                 .collect(java.util.stream.Collectors.joining("&"));
         String requestQuery = preservedQuery.isBlank() ? "wait=true" : preservedQuery + "&wait=true";
         String requestUrl = uri.getScheme() + "://" + uri.getRawAuthority()
+                + uri.getRawPath() + "?" + requestQuery;
+        return URI.create(requestUrl);
+    }
+
+    private static boolean isDiscordHost(String host) {
+        String normalizedHost = host.toLowerCase(Locale.ROOT);
+        return normalizedHost.equals("discord.com")
+                || normalizedHost.endsWith(".discord.com")
+                || normalizedHost.equals("discordapp.com")
+                || normalizedHost.endsWith(".discordapp.com");
+    }
+
+    private static Long retryAfterMillis(HttpResponse<String> response) {
