@@ -154,3 +154,16 @@ public final class CordClipperConfig {
                 GSON.toJson(stored, writer);
             }
 
+            try {
+                Files.move(temporaryPath, configPath,
+                        StandardCopyOption.REPLACE_EXISTING,
+                        StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException ignored) {
+                Files.move(temporaryPath, configPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException | RuntimeException ignored) {
+            try {
+                Files.deleteIfExists(temporaryPath);
+            } catch (IOException cleanupIgnored) {
+                // Keep failures silent in-game; diagnostics contain no URL.
+            }
