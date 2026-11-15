@@ -50,3 +50,16 @@ public final class DiscordWebhookSender {
     /**
      * Submits one independent webhook message for every configured destination.
      * This method is safe to call from the Minecraft client thread.
+     */
+    public static void sendAll(List<WebhookEndpoint> endpoints, CoordinateSnapshot snapshot) {
+        if (endpoints == null || endpoints.isEmpty() || snapshot == null) {
+            return;
+        }
+
+        String body = createPayload(snapshot).toString();
+        for (WebhookEndpoint endpoint : List.copyOf(endpoints)) {
+            if (endpoint != null) {
+                send(endpoint, body);
+            }
+        }
+    }
