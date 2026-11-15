@@ -180,3 +180,12 @@ public final class CordClipperConfig {
 
     private static final class StoredConfig {
         private int clipKeyCode = GLFW.GLFW_KEY_G;
+        private List<StoredWebhook> webhooks = new ArrayList<>();
+    }
+
+    private static final class StoredWebhook {
+        private String id;
+        private String label;
+        private String url;
+    }
+}
