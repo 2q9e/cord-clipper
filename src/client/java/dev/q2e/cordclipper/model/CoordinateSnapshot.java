@@ -24,3 +24,5 @@ public record CoordinateSnapshot(
 
     private static String nonBlankOr(String value, String fallback) {
         return value == null || value.isBlank() ? fallback : value;
+    }
+}
