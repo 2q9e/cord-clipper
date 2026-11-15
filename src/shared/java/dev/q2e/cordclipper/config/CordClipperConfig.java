@@ -1,7 +1,6 @@
 package dev.q2e.cordclipper.config;
 
 import net.fabricmc.loader.api.FabricLoader;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +28,17 @@ public final class CordClipperConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger("cord_clipper");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final String FILE_NAME = "cord-clipper.json";
+    // Keep the integer key-code format written by 0.1.0 configs. Minecraft 26.x
+    // uses SDL key codes, so target adapters translate at the game boundary.
+    private static final int KEY_UNKNOWN = -1;
+    private static final int KEY_SPACE = 32;
+    private static final int KEY_G = 71;
+    private static final int KEY_F3 = 292;
+    private static final int KEY_LAST = 348;
 
     private final Path configPath;
     private final List<WebhookEndpoint> webhooks = new ArrayList<>();
-    private int clipKeyCode = GLFW.GLFW_KEY_G;
+    private int clipKeyCode = KEY_G;
 
     private CordClipperConfig(Path configPath) {
         this.configPath = configPath;
@@ -172,14 +178,14 @@ public final class CordClipperConfig {
     }
 
     private static boolean isValidKeyCode(int keyCode) {
-        return keyCode == GLFW.GLFW_KEY_UNKNOWN
-                || (keyCode >= GLFW.GLFW_KEY_SPACE
-                && keyCode <= GLFW.GLFW_KEY_LAST
-                && keyCode != GLFW.GLFW_KEY_F3);
+        return keyCode == KEY_UNKNOWN
+                || (keyCode >= KEY_SPACE
+                && keyCode <= KEY_LAST
+                && keyCode != KEY_F3);
     }
 
     private static final class StoredConfig {
-        private int clipKeyCode = GLFW.GLFW_KEY_G;
+        private int clipKeyCode = KEY_G;
         private List<StoredWebhook> webhooks = new ArrayList<>();
     }
 
