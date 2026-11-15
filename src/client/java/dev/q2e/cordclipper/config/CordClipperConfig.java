@@ -37,3 +37,16 @@ public final class CordClipperConfig {
     private CordClipperConfig(Path configPath) {
         this.configPath = configPath;
     }
+
+    public static CordClipperConfig load() {
+        Path configPath = FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME);
+        CordClipperConfig config = new CordClipperConfig(configPath);
+
+        if (!Files.isRegularFile(configPath)) {
+            return config;
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+            StoredConfig stored = GSON.fromJson(reader, StoredConfig.class);
+            if (stored == null) {
+                return config;
