@@ -89,3 +89,16 @@ public final class CordClipperScreen extends Screen {
                 textRenderer,
                 contentX,
                 panelY + 96,
+                fieldWidth,
+                20,
+                Text.literal("Paste Discord webhook URL")
+        );
+        webhookUrlField.setMaxLength(512);
+        webhookUrlField.setPlaceholder(Text.literal("Paste Discord webhook URL"));
+        addDrawableChild(webhookUrlField);
+
+        addDrawableChild(ButtonWidget.builder(
+                Text.translatable("screen.cord_clipper.add_webhook"),
+                button -> addWebhook()
+        ).dimensions(contentX + fieldWidth + 8, panelY + 96, addButtonWidth, 20).build());
+
