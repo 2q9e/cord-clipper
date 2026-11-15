@@ -50,3 +50,16 @@ public final class CordClipperClient implements ClientModInitializer {
         }
 
         int clipKeyCode = config.getClipKeyCode();
+        boolean clipKeyDown = clipKeyCode != GLFW.GLFW_KEY_UNKNOWN
+                && clipKeyCode != GLFW.GLFW_KEY_F3
+                && InputUtil.isKeyPressed(client.getWindow(), clipKeyCode);
+        if (clipKeyDown && !clipKeyWasDown
+                && client.currentScreen == null
+                && client.player != null) {
+            clipCurrentCoordinates(client);
+        }
+        clipKeyWasDown = clipKeyDown;
+    }
+
+    private static void clipCurrentCoordinates(MinecraftClient client) {
+        try {
