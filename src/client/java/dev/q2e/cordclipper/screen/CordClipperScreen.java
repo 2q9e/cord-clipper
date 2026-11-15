@@ -167,3 +167,16 @@ public final class CordClipperScreen extends Screen {
             }
             config.setClipKeyCode(stagedClipKeyCode);
         } catch (RuntimeException ignored) {
+            // All failures stay out of the game UI. Config persistence handles
+            // diagnostics in logs, and the player is never shown an error here.
+        }
+    }
+
+    private void closeToParent() {
+        if (client != null) {
+            client.setScreen(parent);
+        }
+    }
+
+    private Text clipKeyMessage() {
+        if (listeningForClipKey) {
