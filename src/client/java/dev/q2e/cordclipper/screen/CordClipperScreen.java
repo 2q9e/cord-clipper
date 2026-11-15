@@ -193,3 +193,16 @@ public final class CordClipperScreen extends Screen {
     }
 
     @Override
+    public boolean keyPressed(KeyInput input) {
+        if (listeningForClipKey) {
+            listeningForClipKey = false;
+            int keyCode = input.key();
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                stagedClipKeyCode = GLFW.GLFW_KEY_UNKNOWN;
+            } else if (keyCode != GLFW.GLFW_KEY_F3 && keyCode != GLFW.GLFW_KEY_UNKNOWN) {
+                stagedClipKeyCode = keyCode;
+            }
+            if (clipKeyButton != null) {
+                clipKeyButton.setMessage(clipKeyMessage());
+            }
+            return true;
