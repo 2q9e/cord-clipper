@@ -245,3 +245,15 @@ public final class DiscordWebhookSender {
         field.addProperty("name", name);
         field.addProperty("value", value);
         field.addProperty("inline", inline);
+        fields.add(field);
+    }
+
+    private static String safeField(String value) {
+        if (value == null || value.isBlank()) {
+            return "Unknown";
+        }
+        String sanitized = value.replace("@", "@\u200B").replace("\r", " ").replace("\n", " ");
+        return sanitized.length() > 1_000 ? sanitized.substring(0, 1_000) : sanitized;
+    }
+
+}
