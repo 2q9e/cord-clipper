@@ -37,3 +37,16 @@ public final class CordClipperClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(CordClipperClient::onClientTick);
         LOGGER.info("Cord Clipper initialized.");
     }
+
+    private static void onClientTick(MinecraftClient client) {
+        while (openScreenKey.wasPressed()) {
+            if (client.player != null) {
+                client.setScreen(new CordClipperScreen(
+                        client.currentScreen,
+                        config,
+                        () -> clipCurrentCoordinates(client)
+                ));
+            }
+        }
+
+        int clipKeyCode = config.getClipKeyCode();
