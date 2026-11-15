@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "cord_clipper",
+  "version": "${version}",
+  "name": "Cord Clipper",
+  "description": "Clip your current client-side coordinates to configured Discord webhooks.",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.q2e.cordclipper.CordClipperClient"
+    ]
+  },
+  "depends": {
