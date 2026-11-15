@@ -60,3 +60,7 @@ Run the matrix from PowerShell:
 ~~~
 
 The matrix compiles each matching coordinate; it does not launch Minecraft. Copy the JAR for the desired Minecraft target into that instance's **mods** folder and start its Fabric profile.
+
+## License
+
+The repository is public, so its source can be viewed. The original Cord Clipper code is available for inspection only under the custom [Cord Clipper Source Viewing License](LICENSE). The license grants no permission to use, reference, copy, modify, or redistribute the project. It is source-available, not an OSI-approved open-source license. Third-party components remain under their own licenses.

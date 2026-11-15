@@ -50,6 +50,9 @@ processResources {
 	inputs.property 'version', targetModVersion
 	inputs.property 'minecraft_dependency', resourceMinecraftDependency
 	inputs.property 'java_dependency', resourceJavaDependency
+	from(rootProject.file('LICENSE')) {
+		into 'META-INF'
+	}
 	filesMatching('fabric.mod.json') {
 		expand(
 				'version': targetModVersion,
@@ -67,6 +70,12 @@ java {
 	withSourcesJar()
 	sourceCompatibility = JavaVersion.toVersion(targetJavaRelease)
 	targetCompatibility = JavaVersion.toVersion(targetJavaRelease)
+}
+
+tasks.named('sourcesJar') {
+	from(rootProject.file('LICENSE')) {
+		into 'META-INF'
+	}
 }
 
 jar {
