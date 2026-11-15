@@ -180,3 +180,16 @@ public final class CordClipperScreen extends Screen {
 
     private Text clipKeyMessage() {
         if (listeningForClipKey) {
+            return Text.literal("Press a key…");
+        }
+        if (stagedClipKeyCode == GLFW.GLFW_KEY_UNKNOWN) {
+            return Text.translatable("screen.cord_clipper.clip_key", "Unbound");
+        }
+        return Text.translatable("screen.cord_clipper.clip_key", keyName(stagedClipKeyCode));
+    }
+
+    private static String keyName(int keyCode) {
+        return InputUtil.Type.KEYSYM.createFromCode(keyCode).getLocalizedText().getString();
+    }
+
+    @Override
