@@ -206,3 +206,16 @@ public final class DiscordWebhookSender {
 
     private static JsonObject createPayload(CoordinateSnapshot snapshot) {
         JsonObject embed = new JsonObject();
+        embed.addProperty("title", "Coordinates clipped");
+        embed.addProperty("color", 0x8B5CF6);
+        embed.addProperty("timestamp", snapshot.capturedAt().toString());
+
+        JsonArray fields = new JsonArray();
+        addField(fields, "Coordinates (X, Y, Z)",
+                "(" + snapshot.x() + ", " + snapshot.y() + ", " + snapshot.z() + ")", false);
+        addField(fields, "Server", safeField(snapshot.server()), true);
+        addField(fields, "Region", safeField(snapshot.region()), true);
+        addField(fields, "Dimension", safeField(snapshot.dimension()), true);
+        embed.add("fields", fields);
+
+        JsonObject footer = new JsonObject();
