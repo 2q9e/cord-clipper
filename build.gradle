@@ -1,11 +1,14 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}" apply false
+	id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
 }
+
+apply plugin: 'net.fabricmc.fabric-loom-remap'
 
 group = project.maven_group
 version = project.mod_version
 base {
-	archivesName = project.archives_base_name
+	archivesName = "${project.archives_base_name}-1.21.11"
 }
 
 repositories {
@@ -22,19 +25,35 @@ loom {
 	}
 }
 
+sourceSets {
+	main {
+		java.srcDir 'src/shared/java'
+	}
+	client {
+		java.setSrcDirs(['src/targets/1.21.11/java'])
+	}
+}
+
+def selectedFabricApi = project.findProperty('fabric_api_override') ?: project.fabric_api_version
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${selectedFabricApi}"
 }
 
 def modVersion = project.version
+def minecraftDependency = project.minecraft_dependency
+def javaDependency = project.java_dependency
 processResources {
 	inputs.property "version", modVersion
+	inputs.property "minecraft_dependency", minecraftDependency
+	inputs.property "java_dependency", javaDependency
 
 	filesMatching("fabric.mod.json") {
-		expand "version": modVersion
+		expand "version": modVersion,
+				"minecraft_dependency": minecraftDependency,
+				"java_dependency": javaDependency
 	}
 }
 
@@ -50,4 +69,8 @@ java {
 
 jar {
 	inputs.property "projectName", project.name
+}
+
+tasks.named('build') {
+	dependsOn subprojects.collect { "${it.path}:build" }
 }
