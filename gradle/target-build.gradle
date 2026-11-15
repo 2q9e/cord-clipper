@@ -1,0 +1,73 @@
+group = rootProject.maven_group
+version = rootProject.mod_version
+
+base {
+	archivesName = "${rootProject.archives_base_name}-${targetArtifact}"
+}
+
+repositories {
+	maven { url = 'https://maven.fabricmc.net/' }
+	mavenCentral()
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"cord_clipper" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+sourceSets {
+	main {
+		java.srcDir rootProject.file('src/shared/java')
+		resources.srcDir rootProject.file('src/main/resources')
+	}
+	client {
+		java.srcDir rootProject.file("src/targets/${sourceOverlay}/java")
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${targetMinecraft}"
+	if (targetMappings) {
+		mappings "net.fabricmc:yarn:${targetMappings}:v2"
+	}
+	def modConfiguration = targetMappings ? 'modImplementation' : 'implementation'
+	add(modConfiguration, "net.fabricmc:fabric-loader:${rootProject.loader_version}")
+	def apiVersion = findProperty('fabric_api_override') ?: targetFabricApi
+	add(modConfiguration, "net.fabricmc.fabric-api:fabric-api:${apiVersion}")
+}
+
+def targetModVersion = project.version.toString()
+def resourceMinecraftDependency = targetMinecraftDependency
+def resourceJavaDependency = ">=${targetJavaRelease}"
+processResources {
+	inputs.property 'version', targetModVersion
+	inputs.property 'minecraft_dependency', resourceMinecraftDependency
+	inputs.property 'java_dependency', resourceJavaDependency
+	filesMatching('fabric.mod.json') {
+		expand(
+				'version': targetModVersion,
+				'minecraft_dependency': resourceMinecraftDependency,
+				'java_dependency': resourceJavaDependency
+		)
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = targetJavaRelease
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.toVersion(targetJavaRelease)
+	targetCompatibility = JavaVersion.toVersion(targetJavaRelease)
+}
+
+jar {
+	inputs.property 'projectName', project.name
+}
