@@ -76,3 +76,16 @@ public final class DiscordWebhookSender {
 
         try {
             HttpRequest request = HttpRequest.newBuilder(uri)
+                    .timeout(Duration.ofSeconds(20))
+                    .header("Content-Type", "application/json; charset=utf-8")
+                    .POST(HttpRequest.BodyPublishers.ofString(body))
+                    .build();
+
+            HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .whenComplete((response, error) -> {
+                        if (error != null) {
+                            // Exception messages can embed the request URI, so log only its type.
+                            LOGGER.warn("Discord webhook delivery failed ({})",
+                                    error.getClass().getSimpleName());
+                            return;
+                        }
