@@ -128,3 +128,16 @@ public final class CordClipperScreen extends Screen {
         persistStagedSettings();
         if (clipAction != null) {
             clipAction.run();
+        }
+    }
+
+    private void addWebhook() {
+        String url = webhookUrlField.getText().trim();
+        if (!url.isBlank()) {
+            String label = nextWebhookLabel();
+            stagedWebhooks.add(new WebhookEndpoint(UUID.randomUUID().toString(), label, url));
+            clampScrollOffset();
+            firstVisibleWebhook = Math.max(0, stagedWebhooks.size() - visibleRows);
+        }
+
+        // Do not leave a saved webhook URL on screen after it is added.
