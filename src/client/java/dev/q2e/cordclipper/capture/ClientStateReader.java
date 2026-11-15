@@ -24,3 +24,16 @@ import java.util.regex.Pattern;
  * open a screen, inspect the F3 overlay, or send a request to the game server.
  */
 public final class ClientStateReader {
+    private static final Pattern REGION_AT_END_OF_PING_LINE = Pattern.compile(
+            "(?i)(?:\\bping\\b|\\b\\d+(?:\\.\\d+)?\\s*ms\\b).*?\\(([a-z]{2,5})\\)\\s*$"
+    );
+
+    private ClientStateReader() {
+    }
+
+    /**
+     * Captures block coordinates and scoreboard context from the active client.
+     * If the local player or world is unavailable, no snapshot can be made.
+     */
+    public static Optional<CoordinateSnapshot> capture(MinecraftClient client) {
+        if (client == null || client.player == null || client.world == null) {
