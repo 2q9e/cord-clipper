@@ -24,3 +24,16 @@ import java.util.UUID;
  * <p>Webhook URLs are accepted in the text box and retained only in memory
  * until Save is selected. They are never included in labels, previews, or
  * other rendered text.</p>
+ */
+public final class CordClipperScreen extends Screen {
+    private static final int ROW_HEIGHT = 22;
+    private static final int ROW_CONTENT_HEIGHT = 20;
+
+    private final Screen parent;
+    private final CordClipperConfig config;
+    private final Runnable clipAction;
+    private final List<WebhookEndpoint> stagedWebhooks = new ArrayList<>();
+
+    private int stagedClipKeyCode;
+    private int firstVisibleWebhook;
+    private boolean listeningForClipKey;
