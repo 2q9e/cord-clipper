@@ -219,3 +219,16 @@ public final class DiscordWebhookSender {
         embed.add("fields", fields);
 
         JsonObject footer = new JsonObject();
+        footer.addProperty("text", "Cord Clipper");
+        embed.add("footer", footer);
+
+        JsonObject payload = new JsonObject();
+        JsonArray embeds = new JsonArray();
+        embeds.add(embed);
+        payload.add("embeds", embeds);
+
+        // Disable parsing for user, role, @everyone and @here mentions.
+        JsonObject allowedMentions = new JsonObject();
+        allowedMentions.add("parse", new JsonArray());
+        allowedMentions.add("users", new JsonArray());
+        allowedMentions.add("roles", new JsonArray());
