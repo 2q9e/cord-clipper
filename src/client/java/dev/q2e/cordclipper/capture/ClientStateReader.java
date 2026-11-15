@@ -89,3 +89,16 @@ public final class ClientStateReader {
 
     private static Optional<String> findRegion(List<String> lines) {
         for (String line : lines) {
+            Matcher matcher = REGION_AT_END_OF_PING_LINE.matcher(line);
+            if (matcher.find()) {
+                return Optional.of(matcher.group(1).toUpperCase(Locale.ROOT));
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static String clean(Text text) {
+        return text == null ? "" : text.getString().trim();
+    }
+
+    private record ScoreboardDetails(String region, String server) {
