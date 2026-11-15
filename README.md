@@ -1,6 +1,19 @@
 # Cord Clipper
 
-Cord Clipper is a client-side Fabric mod for Minecraft 1.21.11. It captures your current block coordinates and the region shown on the client-visible scoreboard, then posts a formatted Discord embed to your configured webhook destinations.
+Cord Clipper is a client-side Fabric mod that captures your current block coordinates and the region shown on the client-visible scoreboard, then posts a formatted Discord embed to your configured webhook destinations.
+
+## Minecraft targets
+
+Each target builds its own JAR.
+
+| Minecraft target | Java |
+| --- | --- |
+| 1.21.4 | 21 |
+| 1.21.11 | 21 |
+| 26.1, 26.1.1, 26.1.2, 26.2, 26.3 | 25 |
+| 26.4-snapshot-8 | 25 |
+
+Support for **26.4-snapshot-8 is preview-only**. It does not promise support for future 26.4 snapshots.
 
 ## Features
 
@@ -15,15 +28,31 @@ Cord Clipper is a client-side Fabric mod for Minecraft 1.21.11. It captures your
 
 Open the Cord Clipper screen, enter each Discord webhook URL, and add it. Saved URLs are hidden from the screen afterward. They are stored in Minecraft's local **config** directory as plain text, not encrypted. Keep the config file private, and remove or replace any webhook URL you no longer trust.
 
-## Build and install
+## Build
 
-Use Java 21 or newer with Fabric Loader and Fabric API for Minecraft 1.21.11.
-The mod metadata does not pin a Fabric API version; use a Fabric API build for Minecraft 1.21.11.
+Use Java 21 for the 1.21.4 and 1.21.11 targets, and Java 25 for 26.x targets. The all-target build includes Java 25 targets, so run it with Java 25.
 
-Build from the repository root:
+Build every target from the repository root:
 
 ~~~powershell
-.\gradlew.bat build
+.\gradlew.bat build -x test
 ~~~
 
-Copy the generated JAR from **build/libs/** into the Minecraft instance's **mods** folder, then launch the Fabric 1.21.11 profile.
+Each target produces its own JAR in that project's **build/libs/** directory. To build one target, use its Gradle project path, for example:
+
+~~~powershell
+.\gradlew.bat :mc1214:build -x test
+.\gradlew.bat :mc261:build -x test
+~~~
+
+## Fabric API compatibility
+
+The runtime manifest uses **fabric-api: "*"**, so it does not pin the mod to one Fabric API build. The compile matrix checks the client source against every published Fabric API Maven coordinate matching the configured targets, including the separate 1.21.11 **_unobfuscated** variants.
+
+Run the matrix from PowerShell:
+
+~~~powershell
+.\scripts\verify-fabric-api-matrix.ps1
+~~~
+
+The matrix compiles each matching coordinate; it does not launch Minecraft. Copy the JAR for the desired Minecraft target into that instance's **mods** folder and start its Fabric profile.
