@@ -89,3 +89,16 @@ public final class CordClipperConfig {
 
     /**
      * Adds a destination and saves it immediately. The caller should clear
+     * its text field after calling this method and should never render the URL
+     * again.
+     */
+    public synchronized void addWebhook(String label, String url) {
+        if (url == null || url.isBlank()) {
+            return;
+        }
+
+        String safeLabel = label == null || label.isBlank()
+                ? "Webhook " + (webhooks.size() + 1)
+                : label.trim();
+        webhooks.add(new WebhookEndpoint(UUID.randomUUID().toString(), safeLabel, url.trim()));
+        save();
