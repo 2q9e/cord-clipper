@@ -167,3 +167,16 @@ public final class DiscordWebhookSender {
             return fromResetHeader;
         }
 
+        try {
+            JsonObject body = JsonParser.parseString(response.body()).getAsJsonObject();
+            if (body.has("retry_after") && body.get("retry_after").isJsonPrimitive()) {
+                double seconds = body.get("retry_after").getAsDouble();
+                if (Double.isFinite(seconds) && seconds >= 0) {
+                    return Math.max(1L, (long) Math.ceil(seconds * 1000.0));
+                }
+            }
+        } catch (RuntimeException ignored) {
+            // A 429 still gets retried if Discord omits a parseable delay.
+        }
+
+        return null;
