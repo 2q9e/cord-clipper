@@ -37,3 +37,16 @@ public final class ClientStateReader {
      */
     public static Optional<CoordinateSnapshot> capture(MinecraftClient client) {
         if (client == null || client.player == null || client.world == null) {
+            return Optional.empty();
+        }
+
+        ClientPlayerEntity player = client.player;
+        ScoreboardDetails scoreboardDetails = readSidebar(client.world.getScoreboard());
+
+        return Optional.of(new CoordinateSnapshot(
+                player.getBlockX(),
+                player.getBlockY(),
+                player.getBlockZ(),
+                scoreboardDetails.region(),
+                scoreboardDetails.server(),
+                client.world.getRegistryKey().getValue().toString(),
