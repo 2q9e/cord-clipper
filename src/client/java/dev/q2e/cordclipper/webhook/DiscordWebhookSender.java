@@ -89,3 +89,16 @@ public final class DiscordWebhookSender {
                                     error.getClass().getSimpleName());
                             return;
                         }
+
+                        int status = response.statusCode();
+                        if (status >= 200 && status < 300) {
+                            return;
+                        }
+
+                        if (status == 429) {
+                            Long retryAfterMillis = retryAfterMillis(response);
+                            if (retryAfterMillis != null) {
+                                RETRY_SCHEDULER.schedule(
+                                        () -> send(endpoint, body),
+                                        retryAfterMillis,
+                                        TimeUnit.MILLISECONDS
