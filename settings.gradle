@@ -11,9 +11,10 @@ pluginManagement {
 
 rootProject.name = 'cord-clipper'
 
-include 'mc1214', 'mc261', 'mc2611', 'mc2612', 'mc262', 'mc263', 'mc264beta'
+include 'mc1214', 'mc12111unobfuscated', 'mc261', 'mc2611', 'mc2612', 'mc262', 'mc263', 'mc264beta'
 
 project(':mc1214').projectDir = file('targets/mc1214')
+project(':mc12111unobfuscated').projectDir = file('targets/mc12111unobfuscated')
 project(':mc261').projectDir = file('targets/mc261')
 project(':mc2611').projectDir = file('targets/mc2611')
 project(':mc2612').projectDir = file('targets/mc2612')

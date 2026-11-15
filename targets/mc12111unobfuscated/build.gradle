@@ -1,0 +1,13 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+ext.targetMinecraft = '1.21.11_unobfuscated'
+ext.targetFabricApi = '0.139.4+1.21.11_unobfuscated'
+ext.targetMappings = null
+ext.targetMinecraftDependency = '1.21.11_unobfuscated'
+ext.targetJavaRelease = 21
+ext.targetArtifact = '1.21.11-unobfuscated'
+ext.sourceOverlay = '1.21.11-unobfuscated'
+
+apply from: rootProject.file('gradle/target-build.gradle')
