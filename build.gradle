@@ -50,3 +50,4 @@ java {
 
 jar {
 	inputs.property "projectName", project.name
+}
