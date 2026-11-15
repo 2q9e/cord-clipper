@@ -10,6 +10,7 @@ Each target builds its own JAR.
 | --- | --- |
 | 1.21.4 | 21 |
 | 1.21.11 | 21 |
+| 1.21.11_unobfuscated (experimental) | 21 |
 | 26.1, 26.1.1, 26.1.2, 26.2, 26.3 | 25 |
 | 26.4-snapshot-8 | 25 |
 
@@ -48,6 +49,8 @@ Each target produces its own JAR in that project's **build/libs/** directory. To
 ## Fabric API compatibility
 
 The runtime manifest uses **fabric-api: "*"**, so it does not pin the mod to one Fabric API build. The compile matrix checks the client source against every published Fabric API Maven coordinate matching the configured targets, including the separate 1.21.11 **_unobfuscated** variants.
+
+Two historical 26.2 API coordinates, `0.145.4+26.2` and `0.145.5+26.2`, currently fail inside Fabric API's own `FabricTagAppender` interface injection against Minecraft 26.2. The other 33 published 26.2 API coordinates compile successfully.
 
 Run the matrix from PowerShell:
 

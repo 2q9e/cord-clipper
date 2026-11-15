@@ -24,7 +24,7 @@ if (-not (Test-Path -LiteralPath $gradleWrapper -PathType Leaf)) {
 $targets = @(
     [pscustomobject]@{ Name = '1.21.4'; ProjectPath = ':mc1214'; Suffix = '+1.21.4' },
     [pscustomobject]@{ Name = '1.21.11'; ProjectPath = ':'; Suffix = '+1.21.11' },
-    [pscustomobject]@{ Name = '1.21.11_unobfuscated'; ProjectPath = ':'; Suffix = '+1.21.11_unobfuscated' },
+    [pscustomobject]@{ Name = '1.21.11_unobfuscated'; ProjectPath = ':mc12111unobfuscated'; Suffix = '+1.21.11_unobfuscated' },
     [pscustomobject]@{ Name = '26.1'; ProjectPath = ':mc261'; Suffix = '+26.1' },
     [pscustomobject]@{ Name = '26.1.1'; ProjectPath = ':mc2611'; Suffix = '+26.1.1' },
     [pscustomobject]@{ Name = '26.1.2'; ProjectPath = ':mc2612'; Suffix = '+26.1.2' },
