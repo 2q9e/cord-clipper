@@ -1,6 +1,6 @@
 # Cord Clipper
 
-Cord Clipper is a client-side Fabric mod that captures your current block coordinates and the region shown on the client-visible scoreboard, then posts a formatted Discord embed to your configured webhook destinations.
+Cord Clipper turns your current Minecraft block position and client-visible scoreboard region into a Discord embed. Trigger a clip from a key binding or the in-game settings screen and send it to one or more webhooks you configure.
 
 ## Minecraft targets
 
